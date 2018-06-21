@@ -1,6 +1,9 @@
 package com.aj.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.ejb.ObjectNotFoundException;
 
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.aj.cursomc.domain.Categoria;
+import com.aj.cursomc.dto.CategoriaDTO;
 import com.aj.cursomc.services.CategoriaService;
 
 @RestController
@@ -28,6 +32,14 @@ public class CategoriaResource {
 		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() throws ObjectNotFoundException {		
+		List<Categoria> lista = service.findAll();
+		List<CategoriaDTO> listaDto = lista.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());		
+		return ResponseEntity.ok().body(listaDto);
+	}
+	
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody Categoria obj) {
 		obj = service.insert(obj);
